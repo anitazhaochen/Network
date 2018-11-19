@@ -1,9 +1,14 @@
+#coding:utf8
 import re
 from flask import request
 from flask import Flask
 import os
 import time
 from flask import render_template
+
+import sys 
+reload(sys)  # Python2.5 初始化后会删除 sys.setdefaultencoding 这个方法，我们需要重新载入 
+sys.setdefaultencoding('utf-8')
 
 app = Flask(__name__)
 
@@ -60,10 +65,9 @@ def setIP():
 
     with open('/etc/sysconfig/network-scripts/ifcfg-eth0', 'w') as f:
         f.writelines(lines)
-
-    os.popen('ifconfig eth0 down')
     time.sleep(1)
-    os.popen('ifconfig eth0 up')
+    os.popen('systemctl restart network')
+
     return "设置成功"
 
 
@@ -78,9 +82,8 @@ def dhcp():
         ]
     with open('/etc/sysconfig/network-scripts/ifcfg-eth0', 'w') as f:
         f.writelines(lines)
-    os.popen('ifconfig eth0 down')
     time.sleep(1)
-    os.popen('ifconfig eth0 up')
+    os.popen('systemctl restart network')
     return "DHCP 服务设置成功"
 
 
