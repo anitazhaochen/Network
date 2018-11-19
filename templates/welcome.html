@@ -1,0 +1,102 @@
+
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <style>
+    .content {
+    position: absolute;
+    top: 50%;
+    height: 240px;
+    margin-left:500px ;
+    margin-top: -120px; /* negative half of the height */
+}
+    </style>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body>
+
+<div id="index">
+
+</div>
+
+<div class="container">
+    <input type="radio" name="mode" id="mode_dhcp" checked="true" value="dhcp">连接Internet(DHCP)<br>
+    <input type="radio" name="mode" id="mode_local" value="local" style="margin-top:20px">本地连接<br>
+    <div style="margin-left:26px;">
+        <label>本地IP：</label><br>
+        <input type="text" id="local_ip" disabled="ture" value="192.168.1.100"><br>
+        <label>掩码：</label><br>
+        <input type="text" id="local_netmask" disabled="ture" value="255.255.255.0"><br>
+    </div>
+    <button id="apply" class="btn btn-default">应用</button>
+    <button id="getNow" class="btn btn-default">当前状态</button>
+    <button id="changepassword" class="btn btn-default"><a href="/changepassword">修改登录密码</a></button>
+    <div style="margin-top:20px">
+        <label>运行结果:</label><br>
+        <label id="result"></label>
+    </div>
+</div>
+<div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script>
+
+    //选择DHCP模式时，禁用输入框
+    $('#mode_local').click(function(){
+        $("#local_ip").removeAttr("disabled");
+        $("#local_netmask").removeAttr("disabled");
+    });
+    //选择本地模式时，启用输入框
+    $('#mode_dhcp').click(function(){
+        $("#local_ip").attr("disabled",true);
+        $("#local_netmask").attr("disabled",true);
+    });
+
+    var cmd = 'df -m'; //todo:根据设置调整相应的cmd命令
+
+    //获取当前状态
+    $('#getNow').click(function(){
+        $.post("/status",function(data,status){}); //第一次post时会缺少数据，此步相当于初始化
+        $.post("/status",function(data,status){
+            if(status=='success'){
+                $('#result').text(data);
+            }
+            else{
+                $('#result').text('something wrong');
+            }
+        });
+    });
+
+    //应用设置
+    $('#apply').click(function(){
+        var modeIndi = $('input:radio[name="mode"]:checked').val();
+        var local_ip = $('#local_ip').val();
+        var local_netmask = $('#local_netmask').val();
+        //本地模式
+        console.log(modeIndi)
+        if ( modeIndi == "local"){
+            $.post("/applylocal", {ip:local_ip, netmask:local_netmask}, function(data,status){
+                $('#result').text(data);
+            });
+        }
+        //dhcp模式
+        else{
+            $.post("/applydhcp",function(data,status){
+                $('#result').text(data);
+            });
+        }
+    });
+</script>
+ <script src="https://code.jquery.com/jquery.js"></script>
+</body>
+</html>
