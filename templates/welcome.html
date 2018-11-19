@@ -34,6 +34,8 @@
         <input type="text" id="local_ip" disabled="ture" value="192.168.1.100"><br>
         <label>掩码：</label><br>
         <input type="text" id="local_netmask" disabled="ture" value="255.255.255.0"><br>
+        <label>网关：</label><br>
+        <input type="text" id="local_gateway" disabled="ture" value="192.168.1.1"><br>
     </div>
     <button id="apply" class="btn btn-default">应用</button>
     <button id="getNow" class="btn btn-default">当前状态</button>
@@ -82,10 +84,11 @@
         var modeIndi = $('input:radio[name="mode"]:checked').val();
         var local_ip = $('#local_ip').val();
         var local_netmask = $('#local_netmask').val();
+        var local_gateway = $('#local_gateway').val();
         //本地模式
         console.log(modeIndi)
         if ( modeIndi == "local"){
-            $.post("/applylocal", {ip:local_ip, netmask:local_netmask}, function(data,status){
+            $.post("/applylocal", {ip:local_ip, netmask:local_netmask, gateway: local_gateway}, function(data,status){
                 $('#result').text(data);
             });
         }

@@ -26,7 +26,7 @@ def login():
 
 @app.route('/status',methods=['POST'])
 def status():
-    res = os.popen('ifconfig en0 | grep "inet"').read()
+    res = os.popen('ifconfig eth0 | grep "inet"').read()
     res = re.findall(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b", res)
     if len(res) > 1:
         s = "本地IP为："+res[0]+"子网掩码为: "+res[1]
@@ -44,7 +44,7 @@ def changepassword():
 def setIP():
     ip = request.form['ip']
     netmask = request.form['netmask']
-    #gateway = request.form['gateway']
+    gateway = request.form['gateway']
 
     lines = [
         'TYPE=Ethernet\n',
@@ -53,12 +53,12 @@ def setIP():
         'NETMASK='+netmask+'\n',
         'NETWORK='+gateway+'\n',
         'DEFROUTE=yes'+'\n',
-        'NAME=enp0s3'+'\n',
-        'DEVICE=enp0s3'+'\n',
+        'NAME=eth0'+'\n',
+        'DEVICE=eth0'+'\n',
         'ONBOOT=yes'
         ]
 
-    with open('/etc/sysconfig/network-scripts/ifcfg-enp0s3') as f:
+    with open('/etc/sysconfig/network-scripts/ifcfg-eth0', 'w') as f:
         f.writelines(lines)
 
     os.popen('ifconfig eth0 down')
@@ -76,7 +76,7 @@ def dhcp():
         'NAME=eth0\n',
         'ONBOOT=yes\n'
         ]
-    with open('/etc/sysconfig/network-scripts/ifcfg-enp0s3') as f:
+    with open('/etc/sysconfig/network-scripts/ifcfg-eth0', 'w') as f:
         f.writelines(lines)
     os.popen('ifconfig eth0 down')
     time.sleep(1)
@@ -87,6 +87,6 @@ def dhcp():
 if __name__ == "__main__":
     app.run(
         host='0.0.0.0',
-        port=7777,
+        port=80,
         debug=True
     )
