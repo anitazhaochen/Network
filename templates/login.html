@@ -36,37 +36,31 @@
     <div class="container">
 
       <form class="form-signin">
-        <h2 class="form-signin-heading">设置初始密码</h2>
-        <label for="inputPassword" class="sr-only">输入新密码</label>
-        <input type="password" id="inputPassword1" class="form-control" placeholder="输入新密码" required="" autofocus="">
-        <label for="inputPassword" class="sr-only">再次输入密码</label>
-        <input type="password" id="inputPassword2" class="form-control" placeholder="再次输入" required="">
-          <input type="text" id="token" hidden="true" value="{{ token }}">
-        <button class="btn btn-lg btn-primary btn-block" type="submit" id="sumbit">确 认</button>
+        <h2 class="form-signin-heading">用户登录</h2>
+        <label for="inputPassword" class="sr-only">密码</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="输入密码" required="" autofocus="">
+        <input type="text" id="token" hidden="true" value="{{ token }}">
+        <button class="btn btn-lg btn-primary btn-block" type="submit" id="submit">登 陆</button>
       </form>
 
     </div> <!-- /container -->
-
 
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="static/bootstarp/ie10-viewport-bug-workaround.js"></script>
     <script>
-        $('#sumbit').click(function(){
-        var password1 = $('#inputPassword1').val();
-        var password2 = $('#inputPassword2').val();
+        $('#submit').click(function(){
+        var password = $('#inputPassword').val();
         var token = $('#token').val();
-        if (password1 == password2){
-            $.post("/createpassword", {password1:password1, password2:password2,token:token}, function(data,status){
-                window.location.href = 'http://127.0.0.1/main'
+        $.post("/VerifyLogin", {password:password,token:token}, function(data,status){
+                if (data == 'failed') {
+                    alert('密码错误')
+                } else{
+                    window.location.href='http://127.0.0.1/main';
+                }
             });
-        }else{
-            alert("两次密码不一致，请重新输入");
-        }
     });
 
-
     </script>
-
 
 </body></html>
